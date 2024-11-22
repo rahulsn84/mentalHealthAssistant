@@ -16,7 +16,7 @@ placeholder = st.empty()
 # Login page
 def login_page():
     st.title("Login Page")
-    sidebar_logo = "images/logo.png"
+    sidebar_logo = "mh_app/images/logo.png"
     with st.sidebar:
         st.image(sidebar_logo)
     print("In login page")
