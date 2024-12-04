@@ -27,12 +27,12 @@ def register_page():
     new_username = st.text_input("Choose a Username")
     new_password = st.text_input("Choose a Password", type="password")
     confirm_password = st.text_input("Confirm Password", type="password")
+    submit = st.button("Register")
 
     #if st.button("Register"):
     print("Before submit_reg")
     if new_username and new_password and confirm_password:
-        submit_reg = st.button("RegisterUser",on_click=submitted)
-        if 'reg_submitted' in st.session_state: #submit_reg:
+        if submit: #submit_reg:
             print("passwords entered ",confirm_password,new_password)
             #reset()
             st.session_state.page = ""

@@ -22,15 +22,17 @@ def show_users():
         db.show_users()
 
 def admin_page():
-    st.title("Admin Page")
-    sidebar_logo = "images/logo.png"
-    with st.sidebar:
-        st.image(sidebar_logo)
-        
-    #c6.button("logout",on_click=logout)  
-    show_users()
-    delete_users()
-    #with c6:
-     #   st.button("logout")
-        
+    user = st.session_state.get("current_user", None)
+    if user=='admin':
+        st.title("Admin Page")
+        sidebar_logo = "images/logo.png"
+        with st.sidebar:
+            st.image(sidebar_logo)
+            
+        #c6.button("logout",on_click=logout)  
+        show_users()
+        delete_users()
+        #with c6:
+         #   st.button("logout")
+            
 #admin_page()

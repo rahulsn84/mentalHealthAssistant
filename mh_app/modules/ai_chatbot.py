@@ -60,6 +60,9 @@ query_config = BaseLlmConfig(system_prompt = "Act as Mental Health Therepist. An
 
 
 def ai_therepist():
+    sidebar_logo = "images/logo.png"
+    with st.sidebar:
+        st.image(sidebar_logo)
     # Initialize chat history
     if "messages" not in st.session_state:
         st.session_state.messages = [

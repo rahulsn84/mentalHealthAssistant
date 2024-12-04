@@ -12,7 +12,7 @@ def create_table():
     cursor = conn.cursor()
     # Create table
     cursor.execute('''CREATE TABLE IF NOT EXISTS mental_health 
-             (date TEXT, feeling integer, serenity integer, sleep integer, productivity integer, enjoyment integer, average real)''')
+             (date TEXT, feeling integer, serenity integer, sleep integer, productivity integer, enjoyment integer, average real,username TEXT NOT NULL)''')
     # Save (commit) the changes
     conn.commit()
     # Close the connection
@@ -26,7 +26,7 @@ def add_entry(date: str,feeling: int,serenity: int,sleep: int,productivity: int,
     #cursor.execute("INSERT INTO mental_health VALUES ({date},{feeling},{serenity},{sleep},{productivity},{enjoyment},{average})".format(date='2024-11-13',
     #    feeling=feeling,serenity=serenity,sleep=sleep,productivity=productivity,enjoyment=enjoyment,average=average))
 
-    cursor.execute("INSERT INTO mental_health VALUES (?,?,?,?,?,?,?)",(date,feeling,serenity,sleep,productivity,enjoyment,average,))    
+    cursor.execute("INSERT INTO mental_health VALUES (?,?,?,?,?,?,?,?)",(date,feeling,serenity,sleep,productivity,enjoyment,average,st.session_state.get("current_user", None)))    
     # Save (commit) the changes
     conn.commit()
     # Close the connection
@@ -78,7 +78,7 @@ def delete_user(username):
     conn = get_usertable_conn()
     #password_hash = hash_password(password)
     try:
-        conn.execute("DELETE FROM users WHERE username = ?", (username,))
+        conn.execute("DELETE FROM users WHERE username = ?", (username))
         conn.commit()
     except :
         print("User name not found")
@@ -100,3 +100,29 @@ def show_users():
         st.error("Error getting user")
     finally:
         conn.close()
+
+def create_activity_table():
+    conn = sqlite3.connect('database/mental_health.db')
+    # Create a cursor object using the cursor() method
+    cursor = conn.cursor()
+    # Create table
+    cursor.execute('''CREATE TABLE IF NOT EXISTS activities 
+             (date TEXT, activity_name TEXT, duration int,username TEXT NOT NULL)''')
+    # Save (commit) the changes
+    conn.commit()
+    # Close the connection
+    conn.close()
+    
+def log_activity(date,activity,duration):
+    conn = sqlite3.connect('database/mental_health.db')
+    # Create a cursor object using the cursor() method
+    cursor = conn.cursor()
+    print(type(date))
+    #cursor.execute("INSERT INTO mental_health VALUES ({date},{feeling},{serenity},{sleep},{productivity},{enjoyment},{average})".format(date='2024-11-13',
+    #    feeling=feeling,serenity=serenity,sleep=sleep,productivity=productivity,enjoyment=enjoyment,average=average))
+
+    cursor.execute("INSERT INTO activities VALUES (?,?,?,?)",(date,activity,duration,st.session_state.get("current_user", None)))    
+    # Save (commit) the changes
+    conn.commit()
+    # Close the connection
+    conn.close()

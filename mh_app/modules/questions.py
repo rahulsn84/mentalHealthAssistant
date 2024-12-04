@@ -2,7 +2,8 @@ import streamlit as st
 from modules import db
 from datetime import datetime
 import plotly.graph_objects as go
-
+import sqlite3
+import pandas as pd 
 
 def ask_questions():
     st.write("## Mental Health Check-In")
@@ -68,3 +69,43 @@ def ask_questions():
     return answers
 
 #ask_questions()
+def track_activities():
+    sidebar_logo = "images/logo.png"
+    with st.sidebar:
+        st.image(sidebar_logo)
+    if 'activities' not in st.session_state:
+        st.session_state.activities = []
+    st.subheader("Track Your Activities")
+        
+    activities = ["Exercise", "Meditation", "Reading", "Socializing", "Therapy", "Other"]
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        activity = st.selectbox("Select Activity", activities)
+        if activity == "Other":
+            activity = st.text_input("Specify activity")
+            
+    with col2:
+        duration = st.number_input("Duration (minutes)", 
+                                 min_value=5, 
+                                 max_value=150,
+                                 value=30,
+                                 step=5)
+    
+    if st.button("Log Activity"):
+    
+        date = datetime.now().strftime("%Y-%m-%d")
+        activity = activity
+        duration = duration
+        
+        db.create_activity_table()  # Create the table if it doesn't exist
+        db.log_activity(date,activity,duration)
+        st.success("Activity logged successfully!")
+        st.session_state.activities=True
+        
+    # Display recent activities
+    if st.session_state.activities:
+        st.subheader("Recent Activities")
+        conn = sqlite3.connect('database/mental_health.db') #db.create_connection()
+        st.dataframe(pd.read_sql_query("SELECT * FROM activities where username ='"+st.session_state.get("current_user", None)+"' ORDER BY date DESC", conn))

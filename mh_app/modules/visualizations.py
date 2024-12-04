@@ -10,13 +10,13 @@ DATABASE_PATH = "./database/mental_health.db"
 
 def read_data():
     with sqlite3.connect(DATABASE_PATH) as conn:
-        df = pd.read_sql_query("SELECT * FROM mental_health ORDER BY date DESC", conn)
+        df = pd.read_sql_query("SELECT * FROM mental_health where username ='"+st.session_state.get("current_user", None)+"' ORDER BY date DESC", conn)
     return df
 
 
 def get_average_scores(conn):
     df2 = pd.read_sql_query(
-        "SELECT AVG(feeling) as avg_feeling, AVG(serenity) as avg_serenity, AVG(sleep) as avg_sleep, AVG(productivity) as avg_productivity, AVG(enjoyment) as avg_enjoyment FROM mental_health", conn)
+        "SELECT AVG(feeling) as avg_feeling, AVG(serenity) as avg_serenity, AVG(sleep) as avg_sleep, AVG(productivity) as avg_productivity, AVG(enjoyment) as avg_enjoyment FROM mental_health where username ='"+st.session_state.get("current_user", None)+"'", conn)
     return df2.values[0]
 
 
@@ -41,14 +41,15 @@ def delete_data():
     if st.button("Delete all data"):
         with sqlite3.connect(DATABASE_PATH) as conn:
             c = conn.cursor()
-            c.execute("DROP TABLE IF EXISTS mental_health")
+            c.execute("delete from table where username ='"+st.session_state.get("current_user", None)+"'")
         st.write("All data has been deleted from the database.")
 
 
 def show_visualization():
     with sqlite3.connect(DATABASE_PATH) as conn:
+        db.create_table()
         df = read_data()
-
+         
         # Generate the visualizations
         fig1 = px.line(df, x="date", y="average", line_shape="spline", color_discrete_sequence=["red"])
         fig1.update_layout(xaxis_tickformat='%Y-%m-%d',
